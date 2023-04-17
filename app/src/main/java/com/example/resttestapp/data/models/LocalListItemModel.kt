@@ -1,6 +1,6 @@
 package com.example.resttestapp.data.models
 
-data class LocalListItem(
+data class LocalListItemModel(
     val albumId: Number,
     val id: Number,
     val title: String,

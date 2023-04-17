@@ -1,10 +1,12 @@
 [versions]
 activity-compose = "1.8.0-alpha3"
 androidx-test-ext-junit = "1.1.5"
+coil-compose = "2.3.0"
 com-android-application = "8.1.0-alpha11"
 compose-bom = "2023.04.00"
 core-ktx = "1.10.0"
 espresso-core = "3.5.1"
+gson = "2.8.9"
 junit = "4.13.2"
 lifecycle-runtime-ktx = "2.6.1"
 org-jetbrains-kotlin-android = "1.8.20"
@@ -14,9 +16,12 @@ kotlin-compiler = "1.4.5"
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.7.0" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 material3 = { group = "androidx.compose.material3", name = "material3", version = "1.0.1" }

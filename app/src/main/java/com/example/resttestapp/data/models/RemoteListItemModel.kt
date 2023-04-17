@@ -1,6 +1,6 @@
 package com.example.resttestapp.data.models
 
-data class RemoteListItem(
+data class RemoteListItemModel(
     val albumId: Number,
     val id: Number,
     val title: String,
