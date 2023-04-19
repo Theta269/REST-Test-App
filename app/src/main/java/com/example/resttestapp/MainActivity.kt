@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -85,68 +86,8 @@ fun JsonList(
             }
             // Detail Popup UI
             if (detailControl && index == selectedIndex)
-                Popup(
-                    alignment = Alignment.Center,
-                    onDismissRequest = { detailControl = false },
-                    properties = PopupProperties(focusable = true)
-                ) {
-                    Card(
-                        modifier = Modifier
-                            .padding(all = 8.dp)
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        shape = RoundedCornerShape(8.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(item.photoUrl)
-                                .crossfade(true)
-                                .build(),
-                            // TODO add placeholder image
-                            // placeholder = painterResource(R.drawable.placeholder),
-                            contentDescription = item.photoTitle,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(16.dp)
-                        )
-
-                        item.photoTitle?.let {
-                            Text(
-                                text = it,
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 4.dp
-                                ),
-                                style = MaterialTheme.typography.titleSmall,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-
-                        item.postTitle?.let {
-                            Text(
-                                text = it,
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 16.dp
-                                ),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-
-                        item.postBody?.let {
-                            Text(
-                                text = it,
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp,
-                                    vertical = 16.dp
-                                ),
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-                    }
+                JsonDetail(localListItem = item) {b ->
+                    detailControl = b
                 }
         }
     }
@@ -159,16 +100,12 @@ fun JsonItem(
     selectedIndex: Int,
     onClick: (Int) -> (Unit)
 ) {
-
-    // Color change on click & whether to show popup
+    // Color change on click
     val backgroundColor: Color = if (index == selectedIndex) {
         MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.colorScheme.background
     }
-
-
-
 
     // List Item UI
     Card(
@@ -240,6 +177,76 @@ fun JsonItem(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun JsonDetail(
+    localListItem: LocalListItemModel,
+    onDismissRequest: (Boolean) -> Unit
+) {
+    Popup(
+        alignment = Alignment.Center,
+        onDismissRequest = { onDismissRequest(false) },
+        properties = PopupProperties(focusable = true)
+    ) {
+        Card(
+            modifier = Modifier
+                .padding(all = 8.dp)
+                .wrapContentWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(localListItem.photoUrl)
+                    .crossfade(true)
+                    .build(),
+                // TODO add placeholder image
+                // placeholder = painterResource(R.drawable.placeholder),
+                contentDescription = localListItem.photoTitle,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp)
+            )
+
+            localListItem.photoTitle?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 4.dp
+                    ),
+                    style = MaterialTheme.typography.titleSmall,
+                    textAlign = TextAlign.Center,
+                )
+            }
+
+            localListItem.postTitle?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 16.dp
+                    ),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                )
+            }
+
+            localListItem.postBody?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 16.dp
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
     }

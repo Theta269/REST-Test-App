@@ -43,7 +43,7 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    // TODO move to data layer?
+    // TODO move to data layer? improve through mapping/reflection?
     fun mergeRemoteSources(
         photos: List<RemoteListItemModel>,
         details: List<RemoteListItemDetailModel>
