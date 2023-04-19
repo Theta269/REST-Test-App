@@ -1,9 +1,12 @@
 package com.example.resttestapp.data.models
 
 data class LocalListItemModel(
-    val albumId: Number,
     val id: Number,
-    val title: String,
-    val url: String,
-    val thumbnailUrl: String
+    val photoAlbumId: Number?,
+    val photoThumbnailUrl: String?,
+    val photoTitle: String?,
+    val photoUrl: String?,
+    var postBody: String?,
+    var postTitle: String?,
+    var userId: Number?,
 )

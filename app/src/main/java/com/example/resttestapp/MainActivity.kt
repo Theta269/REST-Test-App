@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,16 +28,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.resttestapp.data.models.RemoteListItemModel
+import com.example.resttestapp.data.models.LocalListItemModel
 import com.example.resttestapp.ui.theme.RESTTestAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -47,47 +53,136 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    //TODO figure out why it won't read from theme
-                    color = Color.LightGray
-//                    color = MaterialTheme.colorScheme.background
+                    // TODO figure out why it won't read from theme
+                    color = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
+                    // color = MaterialTheme.colorScheme.background
                 ) {
-                    jsonList(mainViewModel.photoListResponse)
+                    JsonList(
+                        mainViewModel.mergeRemoteSources(
+                            mainViewModel.photoListResponse,
+                            mainViewModel.detailListResponse
+                        )
+                    )
                     mainViewModel.getPhotoList()
+                    mainViewModel.getDetailList()
                 }
             }
         }
     }
 }
 @Composable
-fun jsonList(
-    localListItems: List<RemoteListItemModel>
+fun JsonList(
+    localListItems: List<LocalListItemModel>
 ) {
     var selectedIndex by remember { mutableStateOf(-1) }
+    var detailControl by remember { mutableStateOf(false) }
+
     LazyColumn {
-        itemsIndexed(items = localListItems ) {index, item ->
-            jsonItem(localListItem = item, index = 0, selectedIndex = 0)
-//            jsonItem(localListItem = item, index, selectedIndex) { i ->
-//                selectedIndex = i
-//            }
+        itemsIndexed(items = localListItems) { index, item ->
+            JsonItem(localListItem = item, index, selectedIndex) { i ->
+                selectedIndex = i
+                detailControl = true
+            }
+            // Detail Popup UI
+            if (detailControl && index == selectedIndex)
+                Popup(
+                    alignment = Alignment.Center,
+                    onDismissRequest = { detailControl = false },
+                    properties = PopupProperties(focusable = true)
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .padding(all = 8.dp)
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(item.photoUrl)
+                                .crossfade(true)
+                                .build(),
+                            // TODO add placeholder image
+                            // placeholder = painterResource(R.drawable.placeholder),
+                            contentDescription = item.photoTitle,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(16.dp)
+                        )
+
+                        item.photoTitle?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(
+                                    horizontal = 16.dp,
+                                    vertical = 4.dp
+                                ),
+                                style = MaterialTheme.typography.titleSmall,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+
+                        item.postTitle?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(
+                                    horizontal = 16.dp,
+                                    vertical = 16.dp
+                                ),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+
+                        item.postBody?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(
+                                    horizontal = 16.dp,
+                                    vertical = 16.dp
+                                ),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                }
         }
     }
 }
 
 @Composable
-fun jsonItem(
-    localListItem: RemoteListItemModel,
+fun JsonItem(
+    localListItem: LocalListItemModel,
     index: Int,
-    selectedIndex: Int
+    selectedIndex: Int,
+    onClick: (Int) -> (Unit)
 ) {
+
+    // Color change on click & whether to show popup
+    val backgroundColor: Color = if (index == selectedIndex) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.background
+    }
+
+
+
+
+    // List Item UI
     Card(
         modifier = Modifier
             .padding(8.dp, 4.dp)
             .fillMaxWidth()
-            .height(110.dp),
+            .height(110.dp)
+            .clickable {
+                onClick(index)
+            },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Surface() {
+        Surface(color = backgroundColor) {
 
             Row(
                 Modifier
@@ -97,17 +192,16 @@ fun jsonItem(
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(localListItem.thumbnailUrl)
+                        .data(localListItem.photoThumbnailUrl)
                         .crossfade(true)
                         .build(),
                     // TODO add placeholder image
-//                    placeholder = painterResource(R.drawable.placeholder),
-                    contentDescription = localListItem.title,
+                    // placeholder = painterResource(R.drawable.placeholder),
+                    contentDescription = localListItem.photoTitle,
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(0.2f)
                 )
-
 
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -116,51 +210,37 @@ fun jsonItem(
                         .fillMaxHeight()
                         .weight(0.8f)
                 ) {
-                    Text(
-                        text = localListItem.title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = localListItem.url,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier
-                            .background(
-                                Color.LightGray
-                            )
-                            .padding(4.dp),
-                        color = Color.DarkGray
-                    )
-                    Text(
-                        text = localListItem.thumbnailUrl,
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-
+                    localListItem.postTitle?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    localListItem.userId.toString().let {
+                        Text(
+                            text = "User ID: $it",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .background(
+                                    Color.LightGray
+                                )
+                                .padding(4.dp),
+                            color = Color.DarkGray
+                        )
+                    }
+                    localListItem.photoTitle?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun jsonDetail() {
-
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RESTTestAppTheme {
-        Greeting("Android")
     }
 }

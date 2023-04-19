@@ -6,4 +6,17 @@ data class RemoteListItemModel(
     val title: String,
     val url: String,
     val thumbnailUrl: String
-)
+) {
+    fun toLocalListItemModel(): LocalListItemModel  = LocalListItemModel(
+        id = id,
+        photoAlbumId = albumId,
+        photoThumbnailUrl = thumbnailUrl,
+        photoTitle = title,
+        photoUrl = url,
+        postBody = null,
+        postTitle = null,
+        userId = null
+    )
+}
+
+

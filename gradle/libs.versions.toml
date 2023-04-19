@@ -1,20 +1,31 @@
 [versions]
-activity-compose = "1.8.0-alpha3"
+activity-compose = "1.7.0"
 androidx-test-ext-junit = "1.1.5"
 coil-compose = "2.3.0"
 com-android-application = "8.1.0-alpha11"
 compose-bom = "2023.04.00"
+compose-ui = "1.4.1"
 core-ktx = "1.10.0"
 espresso-core = "3.5.1"
-gson = "2.8.9"
+gson = "2.9.0"
 junit = "4.13.2"
+kotlin-compiler = "1.4.5"
 lifecycle-runtime-ktx = "2.6.1"
+material = "1.0.1"
 org-jetbrains-kotlin-android = "1.8.20"
 retrofit = "2.9.0"
-kotlin-compiler = "1.4.5"
+room-runtime = "2.5.1"
 
 [libraries]
-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.7.0" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version = "activity-compose" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room-runtime" }
+androidx-room-guava = { module = "androidx.room:room-guava", version.ref = "room-runtime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room-runtime" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room-runtime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room-runtime" }
+androidx-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "room-runtime" }
+androidx-room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "room-runtime" }
+androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room-runtime" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
@@ -24,14 +35,14 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
-material3 = { group = "androidx.compose.material3", name = "material3", version = "1.0.1" }
+material3 = { group = "androidx.compose.material3", name = "material3", version = "material" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit"}
-ui = { group = "androidx.compose.ui", name = "ui", version = "1.4.1" }
-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version = "1.4.1" }
-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version = "1.4.1" }
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.4.1" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version = "1.4.1" }
-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version = "1.4.1" }
+ui = { group = "androidx.compose.ui", name = "ui", version = "compose-ui" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version = "compose-ui" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version = "compose-ui" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "compose-ui" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version = "compose-ui" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version = "compose-ui" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }
