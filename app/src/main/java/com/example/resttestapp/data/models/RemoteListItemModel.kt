@@ -13,10 +13,16 @@ data class RemoteListItemModel(
         photoThumbnailUrl = thumbnailUrl,
         photoTitle = title,
         photoUrl = url,
-        postBody = null,
-        postTitle = null,
-        userId = null
+        postBody = "",
+        postTitle = "null",
+        userId = 0
     )
+}
+
+fun List<RemoteListItemModel>.asLocalListItemModel(): List<LocalListItemModel> {
+    return map {
+        it.toLocalListItemModel()
+    }
 }
 
 

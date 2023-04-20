@@ -1,5 +1,7 @@
 package com.example.resttestapp.data.models
 
+import com.example.resttestapp.data.local.entities.LocalListItemEntity
+
 data class RemoteListItemDetailModel(
     val userId: Number,
     val id: Number,
@@ -8,12 +10,18 @@ data class RemoteListItemDetailModel(
 ) {
     fun toLocalListItemModel(): LocalListItemModel = LocalListItemModel(
         id = id,
-        photoAlbumId = null,
-        photoThumbnailUrl = null,
-        photoTitle = null,
-        photoUrl = null,
+        photoAlbumId = 0,
+        photoThumbnailUrl = "",
+        photoTitle = "",
+        photoUrl = "",
         postBody = body,
         postTitle = title,
         userId = userId
     )
+}
+
+fun List<RemoteListItemDetailModel>.asLocalListItemModel(): List<LocalListItemModel> {
+    return map {
+        it.toLocalListItemModel()
+    }
 }

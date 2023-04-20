@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     // TODO figure out why it won't read from theme
                     color = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
-                    // color = MaterialTheme.colorScheme.background
+//                     color = MaterialTheme.colorScheme.background
                 ) {
                     JsonList(
                         mainViewModel.mergeRemoteSources(
@@ -120,13 +120,11 @@ fun JsonItem(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Surface(color = backgroundColor) {
-
             Row(
                 Modifier
                     .padding(4.dp)
                     .fillMaxSize()
             ) {
-
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(localListItem.photoThumbnailUrl)
@@ -147,35 +145,31 @@ fun JsonItem(
                         .fillMaxHeight()
                         .weight(0.8f)
                 ) {
-                    localListItem.postTitle?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    localListItem.userId.toString().let {
-                        Text(
-                            text = "User ID: $it",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier
-                                .background(
-                                    Color.LightGray
-                                )
-                                .padding(4.dp),
-                            color = Color.DarkGray
-                        )
-                    }
-                    localListItem.photoTitle?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.labelMedium,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    Text(
+                        text = localListItem.postTitle,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Text(
+                        text = "User ID: ${localListItem.userId}",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .background(
+                                Color.LightGray
+                            )
+                            .padding(4.dp),
+                        color = Color.DarkGray
+                    )
+
+                    Text(
+                        text = localListItem.photoTitle,
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }
@@ -213,41 +207,34 @@ fun JsonDetail(
                     .padding(16.dp)
             )
 
-            localListItem.photoTitle?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 4.dp
-                    ),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Center,
-                )
-            }
+            Text(
+                text = localListItem.photoTitle,
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 4.dp
+                ),
+                style = MaterialTheme.typography.titleSmall,
+                textAlign = TextAlign.Center,
+            )
 
-            localListItem.postTitle?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 16.dp
-                    ),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
-            }
-
-            localListItem.postBody?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier.padding(
-                        horizontal = 16.dp,
-                        vertical = 16.dp
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            Text(
+                text = localListItem.postTitle,
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 16.dp
+                ),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = localListItem.postBody,
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 16.dp
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }

@@ -8,13 +8,30 @@ import androidx.lifecycle.viewModelScope
 import com.example.resttestapp.data.models.LocalListItemModel
 import com.example.resttestapp.data.models.RemoteListItemDetailModel
 import com.example.resttestapp.data.models.RemoteListItemModel
+import com.example.resttestapp.data.models.asLocalListItemModel
 import com.example.resttestapp.data.sources.JsonApi
 import kotlinx.coroutines.launch
 
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
     var photoListResponse:List<RemoteListItemModel> by mutableStateOf(listOf())
     var detailListResponse:List<RemoteListItemDetailModel> by mutableStateOf(listOf())
+//    private val listRepository = ListRepository(getDatabase(application))
     private var errorMessage: String by mutableStateOf("")
+
+//    private fun refreshDataFromRepository() {
+//        viewModelScope.launch {
+//            try {
+//                listRepository.refreshVideos()
+//                _eventNetworkError.value = false
+//                _isNetworkErrorShown.value = false
+//
+//            } catch (networkError: IOException) {
+//                // Show a Toast error message and hide the progress bar.
+//                if(playlist.value.isNullOrEmpty())
+//                    _eventNetworkError.value = true
+//            }
+//        }
+//    }
 
     fun getPhotoList() {
         viewModelScope.launch {
@@ -49,28 +66,25 @@ class MainViewModel: ViewModel() {
         details: List<RemoteListItemDetailModel>
     ): List<LocalListItemModel> {
         //Convert full list of photos to LocalListItemModel
-        val photoItemList: MutableList<LocalListItemModel> =
-            emptyList<LocalListItemModel>().toMutableList()
-        for (photo in photos) {
-            photoItemList.add(photo.toLocalListItemModel())
-        }
+        var mergedList = photos.asLocalListItemModel()
 
         //Convert full list of details to LocalListItemModel
-        val detailItemList: MutableList<LocalListItemModel> =
-            emptyList<LocalListItemModel>().toMutableList()
-        for (detail in details) {
-            detailItemList.add(detail.toLocalListItemModel())
-        }
+        val newList = details.asLocalListItemModel()
 
         //Merge elements from both lists to return one consolidated list
-        for (i in photoItemList.indices) {
-            if (photoItemList[i].id == detailItemList[i].id) {
-                photoItemList[i].postBody = detailItemList[i].postBody
-                photoItemList[i].postTitle = detailItemList[i].postTitle
-                photoItemList[i].userId = detailItemList[i].userId
-            }
+        mergedList = mergedList.mapIndexed { index, item ->
+            LocalListItemModel(
+                id = item.id,
+                photoAlbumId = item.photoAlbumId,
+                photoThumbnailUrl = item.photoThumbnailUrl,
+                photoTitle = item.photoTitle,
+                photoUrl = item.photoUrl,
+                postBody = newList[index].postBody,
+                postTitle = newList[index].postTitle,
+                userId = newList[index].userId
+            )
         }
 
-        return photoItemList
+        return mergedList
     }
 }

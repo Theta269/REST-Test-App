@@ -13,8 +13,8 @@ interface ListItemDao {
     fun getAll(): List<LocalListItemEntity>
 
     @Insert
-    fun insertAll(vararg listItems: LocalListItemEntity)
+    fun insertAll(vararg listItems: List<LocalListItemEntity>)
 
     @Delete
-    fun delete(listItem: LocalListItemEntity)
+    fun deleteAll(listItems: List<LocalListItemEntity>)
 }
