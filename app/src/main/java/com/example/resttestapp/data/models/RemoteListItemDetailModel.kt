@@ -1,7 +1,5 @@
 package com.example.resttestapp.data.models
 
-import com.example.resttestapp.data.local.entities.LocalListItemEntity
-
 data class RemoteListItemDetailModel(
     val userId: Number,
     val id: Number,

@@ -1,45 +1,39 @@
 package com.example.resttestapp
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.resttestapp.data.local.entities.asLocalListItemModel
+import com.example.resttestapp.data.local.getDatabase
 import com.example.resttestapp.data.models.LocalListItemModel
-import com.example.resttestapp.data.models.RemoteListItemDetailModel
-import com.example.resttestapp.data.models.RemoteListItemModel
-import com.example.resttestapp.data.models.asLocalListItemModel
+import com.example.resttestapp.data.repositories.ListRepository
 import com.example.resttestapp.data.sources.JsonApi
+import com.example.resttestapp.data.sources.LocalListDataSource
+import com.example.resttestapp.data.sources.RemoteListDataSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-    var photoListResponse:List<RemoteListItemModel> by mutableStateOf(listOf())
-    var detailListResponse:List<RemoteListItemDetailModel> by mutableStateOf(listOf())
-//    private val listRepository = ListRepository(getDatabase(application))
+class MainViewModel(app: Application) : AndroidViewModel(application = Application()) {
+    var localListResponse:List<LocalListItemModel> by mutableStateOf(listOf())
+    private val listRepository: ListRepository
     private var errorMessage: String by mutableStateOf("")
 
-//    private fun refreshDataFromRepository() {
-//        viewModelScope.launch {
-//            try {
-//                listRepository.refreshVideos()
-//                _eventNetworkError.value = false
-//                _isNetworkErrorShown.value = false
-//
-//            } catch (networkError: IOException) {
-//                // Show a Toast error message and hide the progress bar.
-//                if(playlist.value.isNullOrEmpty())
-//                    _eventNetworkError.value = true
-//            }
-//        }
-//    }
+    init {
+        val remoteListDataSource = RemoteListDataSource(JsonApi.getInstance(), Dispatchers.IO)
+        val localListDataSource = LocalListDataSource(getDatabase(app), Dispatchers.IO)
+        listRepository = ListRepository(remoteListDataSource, localListDataSource)
+        refreshDataFromRepository()
+    }
 
-    fun getPhotoList() {
+    private fun refreshDataFromRepository() {
         viewModelScope.launch {
-            val photoApi = JsonApi.getInstance()
             try {
-                val photoList = photoApi.fetchAllPhotos()
-                // TODO Limit list of photos to 100 to match posts return for demo purposes
-                photoListResponse = photoList.subList(0, 100)
+                listRepository.synchronize()
             }
             catch (e: Exception) {
                 errorMessage = e.message.toString()
@@ -47,12 +41,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getDetailList() {
+    fun getLocalDataList() {
         viewModelScope.launch {
-            val detailApi = JsonApi.getInstance()
             try {
-                val detailList = detailApi.fetchAllPosts()
-                detailListResponse = detailList
+                localListResponse = listRepository.getDataFromLocal().asLocalListItemModel()
             }
             catch (e: Exception) {
                 errorMessage = e.message.toString()
@@ -60,31 +52,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    // TODO move to data layer? improve through mapping/reflection?
-    fun mergeRemoteSources(
-        photos: List<RemoteListItemModel>,
-        details: List<RemoteListItemDetailModel>
-    ): List<LocalListItemModel> {
-        //Convert full list of photos to LocalListItemModel
-        var mergedList = photos.asLocalListItemModel()
-
-        //Convert full list of details to LocalListItemModel
-        val newList = details.asLocalListItemModel()
-
-        //Merge elements from both lists to return one consolidated list
-        mergedList = mergedList.mapIndexed { index, item ->
-            LocalListItemModel(
-                id = item.id,
-                photoAlbumId = item.photoAlbumId,
-                photoThumbnailUrl = item.photoThumbnailUrl,
-                photoTitle = item.photoTitle,
-                photoUrl = item.photoUrl,
-                postBody = newList[index].postBody,
-                postTitle = newList[index].postTitle,
-                userId = newList[index].userId
-            )
+    class Factory(private val app: Application) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(app) as T
+            }
+            throw IllegalArgumentException("Unable to construct viewmodel")
         }
-
-        return mergedList
     }
 }

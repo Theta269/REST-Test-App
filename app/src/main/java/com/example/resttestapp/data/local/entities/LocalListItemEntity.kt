@@ -7,14 +7,14 @@ import com.example.resttestapp.data.models.LocalListItemModel
 
 @Entity
 data class LocalListItemEntity constructor(
-    @PrimaryKey val id: Number,
-    @ColumnInfo(name = "photo_album_id") val photoAlbumId: Number,
+    @PrimaryKey val id: Int,
+    @ColumnInfo(name = "photo_album_id") val photoAlbumId: Int,
     @ColumnInfo(name = "photo_thumnail_url")val photoThumbnailUrl: String,
     @ColumnInfo(name = "photo_title")val photoTitle: String,
     @ColumnInfo(name = "photo_url")val photoUrl: String,
     @ColumnInfo(name = "post_body")val postBody: String,
     @ColumnInfo(name = "post_title")val postTitle: String,
-    @ColumnInfo(name = "user_id")val userId: Number,
+    @ColumnInfo(name = "user_id")val userId: Int,
 )
 
 fun List<LocalListItemEntity>.asLocalListItemModel(): List<LocalListItemModel> {

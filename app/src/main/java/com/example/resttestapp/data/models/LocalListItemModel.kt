@@ -13,14 +13,14 @@ data class LocalListItemModel(
     var userId: Number,
 ) {
     fun toLocalListItemEntity(): LocalListItemEntity = LocalListItemEntity(
-        id = id,
-        photoAlbumId = photoAlbumId,
+        id = id.toInt(),
+        photoAlbumId = photoAlbumId.toInt(),
         photoThumbnailUrl = photoThumbnailUrl,
         photoTitle = photoTitle,
         photoUrl = photoUrl,
         postBody = postBody,
         postTitle = postTitle,
-        userId = userId
+        userId = userId.toInt()
     )
 }
 

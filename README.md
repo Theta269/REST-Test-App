@@ -13,3 +13,7 @@ Jetpack Compose & Coil will be used for UI & image rendering, and data will be s
 * Clicking on a list item shows a detailed view of that item
 * Persists the contents of the feed locally, so if the app is used without Internet connection it will show previously downloaded content
 * Compiles and runs from Android Studio
+
+#### Build Configuration
+* Java version 17
+* Gradle version 8.1.1
