@@ -43,6 +43,8 @@ Website - https://developer.android.com/jetpack/androidx/releases/room
 
 ### Annotation
 **KSP** - Maintained by Google - Kotlin Symbol Processing (KSP) is an API that you can use to develop lightweight compiler plugins. KSP provides a simplified compiler plugin API that leverages the power of Kotlin while keeping the learning curve at a minimum. Compared to KAPT, annotation processors that use KSP can run up to 2x faster.
+This is recommended best practice:
+https://developer.android.com/build/migrate-to-ksp
 
 Website - https://github.com/google/ksp
 
@@ -51,7 +53,12 @@ Website - https://github.com/google/ksp
 * Java version 17 - Jetbrains Runtime 17.0.6
 * Gradle version 8.1.1
 
-The gradle scripts should download these Gradle & JDK versions automatically, but if for whatever reason they are not set up, one can find the JDK setup as follows:
+Canary versions of Android studio were picked to support Jetpack Compose tooling and Gradle Version Catalog.
+https://developer.android.com/studio/preview/features
+https://developer.android.com/build/migrate-to-catalogs
+
+## Troubleshooting
+The gradle scripts should download Gradle & JDK versions automatically, but if for whatever reason they are not set up, one can find the JDK setup as follows:
 
 Android Studio (or "File" on Windows) -> Settings -> Build, Execution, Deployment -> Build Tools -> Gradle
 
