@@ -12,6 +12,7 @@ class ListRepository (
     private val remoteDataSource: RemoteListDataSource,
     private val localDataSource: LocalListDataSource,
 ) {
+    // TODO subList is to limit items to match fetchLatestDetails count for demo, remove if refactored
     suspend fun fetchLatestPhotos(): List<RemoteListItemModel> = remoteDataSource.fetchAllPhotos().subList(0, 100)
 
     suspend fun fetchLatestDetails(): List<RemoteListItemDetailModel> = remoteDataSource.fetchAllDetails()

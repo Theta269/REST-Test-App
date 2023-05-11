@@ -47,14 +47,23 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import com.example.resttestapp.data.models.LocalListItemModel
+import com.example.resttestapp.data.repositories.ListRepository
+import com.example.resttestapp.data.sources.JsonApi
+import com.example.resttestapp.data.sources.LocalListDataSource
+import com.example.resttestapp.data.sources.RemoteListDataSource
 import com.example.resttestapp.ui.theme.RESTTestAppTheme
+import kotlinx.coroutines.Dispatchers
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by lazy {
-        val activity = requireNotNull(this) {
-            "You can only access the viewModel after onActivityCreated()"
-        }
-        ViewModelProvider(this, MainViewModel.Factory(activity.application))[MainViewModel::class.java]
+        val app = this.application as RestTestApplication
+        val remoteListDataSource = RemoteListDataSource(JsonApi.getInstance(), Dispatchers.IO)
+        val localListDataSource = LocalListDataSource(app.database, Dispatchers.IO)
+        val listRepository = ListRepository(remoteListDataSource, localListDataSource)
+        ViewModelProvider(
+            this,
+            MainViewModel.Factory(listRepository)
+        )[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

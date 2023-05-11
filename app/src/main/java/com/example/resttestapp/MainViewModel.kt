@@ -1,32 +1,23 @@
 package com.example.resttestapp
 
-import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.resttestapp.data.local.entities.asLocalListItemModel
-import com.example.resttestapp.data.local.getDatabase
 import com.example.resttestapp.data.models.LocalListItemModel
 import com.example.resttestapp.data.repositories.ListRepository
-import com.example.resttestapp.data.sources.JsonApi
-import com.example.resttestapp.data.sources.LocalListDataSource
-import com.example.resttestapp.data.sources.RemoteListDataSource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel(app: Application) : AndroidViewModel(application = Application()) {
-    var localListResponse:List<LocalListItemModel> by mutableStateOf(listOf())
+class MainViewModel(
     private val listRepository: ListRepository
+) : ViewModel() {
+    var localListResponse:List<LocalListItemModel> by mutableStateOf(listOf())
     private var errorMessage: String by mutableStateOf("")
 
     init {
-        val remoteListDataSource = RemoteListDataSource(JsonApi.getInstance(), Dispatchers.IO)
-        val localListDataSource = LocalListDataSource(getDatabase(app), Dispatchers.IO)
-        listRepository = ListRepository(remoteListDataSource, localListDataSource)
         refreshDataFromRepository()
     }
 
@@ -52,11 +43,13 @@ class MainViewModel(app: Application) : AndroidViewModel(application = Applicati
         }
     }
 
-    class Factory(private val app: Application) : ViewModelProvider.Factory {
+    class Factory(
+        private val listRepository: ListRepository
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return MainViewModel(app) as T
+                return MainViewModel(listRepository) as T
             }
             throw IllegalArgumentException("Unable to construct viewmodel")
         }
