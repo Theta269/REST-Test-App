@@ -2,6 +2,7 @@ package com.example.resttestapp
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,8 @@ class MainViewModel(
     private val listRepository: ListRepository
 ) : ViewModel() {
     var localListResponse:List<LocalListItemModel> by mutableStateOf(listOf())
+    var selectedIndex by mutableStateOf(-1)
+    var detailControl by mutableStateOf(false)
     private var errorMessage: String by mutableStateOf("")
 
     init {
